@@ -8,7 +8,6 @@ double twoPointDistance(Vec2 a, Vec2 b);
 // 物理演算用のワールド
 P2World world(50);
 
-
 void Main()
 {
 #pragma region  変数
@@ -113,6 +112,16 @@ void Main()
 	int jumpNum = 0;
 
 #pragma endregion
+	TextEditState tes2;
+
+	// 移動のオフセット
+	Vec2 pos(40, 40);
+
+	// Polygon 単純化時の基準距離（ピクセル）
+	double maxDistance = 4.0;
+
+	// 単純化した Polygon
+	bool reset = false;
 	//カメラ
 	Camera2D camera(Vec2(Scene::CenterF().x + 10, Scene::CenterF().y), 10.0);
 	while (System::Update())
@@ -245,7 +254,6 @@ void Main()
 				if (MouseL.up() && clicking)
 				{
 					aiming = false;
-					//world.setGravity(50);
 					//地面判定
 					//発射時ボールが接触しているオブジェクト
 					for (auto [pair, collision] : world.getCollisions())
@@ -314,10 +322,8 @@ void Main()
 					{
 						//ゴールの底ついたらゴール判定
 						if (pair.a == Goal[2].id() || pair.b == Goal[2].id()) {
-							ClearPrint();
-							Print(U"GOOOOOOOOOOOOOOOOOOOOOOOAL");
 							aiming = false;
-
+							//ゴールの音声再生
 							audioList[3].play();
 						}
 						else
@@ -382,7 +388,6 @@ void Main()
 #pragma endregion
 #pragma region GUI
 
-
 		SimpleGUI::RadioButtons(inputMode, { U"Floor", U"Goal",U"Pen Floor", U"Delete",U"Start Pos" }, Vec2(395, 10), 180, !play);
 		SimpleGUI::Slider(U"Size:{:.1f}"_fmt(size), size, 1.0, 10.0, Vec2(395, 230), 80, 120, !play);
 		SimpleGUI::Slider(U"Rot:{:.1f}"_fmt(rot), rot, 0.0_deg, 180.0_deg, Vec2(395, 280), 80, 120, !play);
@@ -419,7 +424,11 @@ void Main()
 
 		texture.draw();
 		font(U"Jump: {} times\n"_fmt(jumpNum)).draw(12, 20, ColorF(0.25));
-		font2(U"音楽：魔王魂\nMusic from https://www.zapsplat.com").draw(395,470, ColorF(0.25));
+		font2(U"音楽：魔王魂\nMusic from https://www.zapsplat.com").draw(395, 470, ColorF(0.25));
+
+		// 単純化した Polygon の頂点数を表示
+		ClearPrint();
+	
 #pragma endregion
 		camera.draw(Palette::Orange);
 
