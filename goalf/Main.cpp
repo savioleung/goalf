@@ -127,7 +127,7 @@ void Main()
 	while (System::Update())
 	{
 #pragma region 絵を描く
-		//絵を描く
+		//線を描く足場
 
 		if (!play && inputMode == 2)
 		{
@@ -239,6 +239,7 @@ void Main()
 			}
 			//遊べる時
 			if (play) {
+				//編集BGMを止めて、ゲームBGMを再生
 				if (audioList[1].isPlaying()) {
 					audioList[1].stop();
 				}
@@ -261,10 +262,10 @@ void Main()
 						//世界中の当たり判定の中でボールがある当たり判定
 						if (pair.a == myBallID || pair.b == myBallID)
 						{
-							//壁に当たった場合
+							//壁に当たった場合、もう一回ジャンプできる
 							if (wallCollidedIDs.includes(pair.a) || wallCollidedIDs.includes(pair.b)) {
 								canJump = true;
-							}
+							}//地面に当たった場合、ジャンプ回数リセット
 							else if (floorCollidedIDs.includes(pair.a) || floorCollidedIDs.includes(pair.b))
 							{
 								canJump = true;
@@ -276,6 +277,7 @@ void Main()
 					outPos = Cursor::Pos();
 
 					Vec2 ang;
+					//同じく地点を引っ張って、弾く方向計算できない場合、角度を計算
 					if (outPos != enterPos) {
 						ang = (enterPos - outPos).normalized();
 					}
@@ -294,6 +296,7 @@ void Main()
 						myBall.setVelocity(savePos);
 						stopTime = false;
 					}
+					//ジャンプ
 					if (canJump) {
 						if (ballJump > 0) {
 							audioList[0].play();
@@ -415,8 +418,6 @@ void Main()
 			}
 		}
 		if (SimpleGUI::Slider(volume, Vec2(395, 550)))
-		{
-		}
 		for (const auto& audio : audioList) {
 			// 音量を設定 (0.0 - 1.0)
 			audio.setVolume(volume);
